@@ -5,10 +5,13 @@
 
 # local data
 cache/
-data/
+data/*
 
 # python
 .venv/
 venv/
 __pycache__/
 *.pyc
+
+# outputs meant to be shared
+!data/candidates.csv

@@ -765,6 +765,9 @@ alexandria delta surprise paradise orange independence enterprise springs
 split tours nancy derby norman sandy victoria-downtown tri-cities
 salem charlotte madison phoenix providence richmond hamilton lincoln columbus
 newton florence mercedes jackson kingston
+naga mansa moshi samba mango ganja nada waka mala cantu stains aloha bamba
+padam kula mojo dolo godda playas banga casper estrella evergreen tequila
+vineyard shelby portishead
 """.split())
 # Some DROP names (Mobile, Phoenix, Jackson, Kingston...) are also in the
 # curated list below, which always wins - so they still match, at the
@@ -820,8 +823,13 @@ def gazetteer() -> dict[str, tuple[str, str, str]]:
     for city in gc.get_cities().values():
         name = city["name"]
         k = _key(name)
+        population = city.get("population") or 0
+        # "Comé", "Savé", "Thān" fold to "come", "save", "than": a small
+        # accented one-word city is far more likely an English word.
+        if " " not in k and k != name.lower() and population < 1_000_000:
+            continue
         z = zipf(name) if zipf else (5.0 if k in common else 0.0)
-        conf = _city_confidence(k, city.get("population") or 0, z)
+        conf = _city_confidence(k, population, z)
         if conf:
             put(name, "city", conf)
 
@@ -908,7 +916,7 @@ dundee benghazi kendall seymour fargo hercules
 # -- Pattern matching ----------------------------------------------------------
 
 _GENERIC = (
-    r"Street|St\.|Avenue|Ave\.?|Road|Rd\.?|Boulevard|Blvd\.?|Lane|Drive|Highway|"
+    r"Street|St\.|Avenue|Ave\.?|Road|Rd\.?|Boulevard|Blvd\.?|Lane|Highway|"
     r"Freeway|Turnpike|Parkway|Bridge|River|Creek|Island|Islands|Isle|Bay|Beach|"
     r"Harbor|Harbour|Hill|Hills|Heights|Park|Square|Mountain|Mountains|Canyon|"
     r"Valley|Lake|Falls|Station|County|Parish|Plaza|Pier|Coast|Cove|Point|Gulch"
