@@ -62,6 +62,22 @@ def _key(s: str) -> str:
 # One entry per line: "Name" or "Name|alias|alias". Type comes from the block.
 
 CURATED = {
+    "province": """
+        Alberta
+        British Columbia
+        Manitoba
+        New Brunswick
+        Newfoundland|Newfoundland and Labrador
+        Labrador
+        Nova Scotia
+        Ontario
+        Prince Edward Island|PEI
+        Quebec|Québec
+        Saskatchewan
+        Yukon
+        Northwest Territories
+        Nunavut
+    """,
     "river": """
         Mississippi|Mississippi River
         Missouri River
@@ -81,7 +97,7 @@ CURATED = {
         Shenandoah
         ?Delta|Mississippi Delta
         ?Moon River
-        Yukon
+        Yukon River
         Tennessee River
         Volga
         Rhine
@@ -447,17 +463,6 @@ CURATED = {
         Sun Belt
         ?Heartland
         ?Badlands
-        Yukon Territory
-        Alberta
-        British Columbia
-        Quebec
-        Ontario
-        Manitoba
-        Saskatchewan
-        Nova Scotia
-        Newfoundland
-        Labrador
-        New Brunswick
         Queensland
         New South Wales
         ?Victoria
@@ -972,9 +977,6 @@ def find_places(title: str) -> list[tuple[str, str, str]]:
     return results
 
 
-def annotate(row: dict) -> dict:
-    matches = find_places(row.get("track_name", ""))
-    row["place_match"] = "; ".join(m[0] for m in matches)
-    row["place_type"] = "; ".join(m[1] for m in matches)
-    row["confidence"] = matches[0][2] if matches else ""
-    return row
+def song_key(title: str, artist_id: str) -> str:
+    """Identity of a song for de-duplication: cleaned title + primary artist."""
+    return f"{_key(clean_title(title))}|{artist_id}"
