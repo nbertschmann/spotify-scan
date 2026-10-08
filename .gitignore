@@ -1,0 +1,14 @@
+# secrets / auth
+.env
+.spotify_token_cache
+.cache*
+
+# local data
+cache/
+data/
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
